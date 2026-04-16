@@ -6,6 +6,11 @@ on:
       - main
   pull_request:
 
+
+defaults:
+  run:
+    working-directory: app
+
 jobs:
   verify:
     name: Format, Analyze, Test
@@ -25,7 +30,7 @@ jobs:
         run: flutter --version
 
       - name: Verify project structure
-        run: ls -la app/pubspec.yaml
+        run: ls -la pubspec.yaml
 
       - name: Install dependencies
         run: flutter pub get
