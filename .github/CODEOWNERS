@@ -1,0 +1,15 @@
+# Replace all placeholder usernames/teams with real GitHub handles.
+
+# Default owners for entire repository
+* @your-org/mobile-core-reviewers
+
+# Flutter app source ownership
+/lib/ @your-org/mobile-team
+/test/ @your-org/mobile-team
+
+# Platform-specific ownership (optional placeholders)
+/android/ @your-org/android-team
+/ios/ @your-org/ios-team
+
+# Documentation ownership
+*.md @your-org/docs-team

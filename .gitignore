@@ -1,0 +1,33 @@
+# Flutter/Dart/Pub
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+.packages
+.pub/
+.pub-cache/
+build/
+
+# Coverage
+coverage/
+
+# IDE/editor
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Generated/temporary
+*.tmp
+*.temp
+
+# Secrets and local env
+.env
+.env.*
+!.env.example

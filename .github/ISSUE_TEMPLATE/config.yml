@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discussions (Placeholder)
+    url: https://github.com/<your-org-or-user>/<your-repo>/discussions
+    about: Use discussions for questions, architecture conversations, and general support.
+  - name: Support (Placeholder)
+    url: https://github.com/<your-org-or-user>/<your-repo>/issues/new?template=task.yml
+    about: Use this temporary support path until dedicated support channels are defined.
