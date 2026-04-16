@@ -1,0 +1,71 @@
+name: Bug report
+description: Report a reproducible problem in the Flutter app.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Briefly describe the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Provide exact steps.
+      placeholder: |
+        1. Launch app
+        2. Navigate to ...
+        3. Tap ...
+        4. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected Behavior
+      description: What should happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual Behavior
+      description: What happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include device, OS version, Flutter version, and app version/commit.
+      placeholder: "Device: ...\nOS: ...\nFlutter: ...\nCommit/App version: ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / Logs
+      description: Add screenshots, recordings, or relevant logs.
+      placeholder: Drag and drop files here.
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Define what confirms the bug is fixed.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true

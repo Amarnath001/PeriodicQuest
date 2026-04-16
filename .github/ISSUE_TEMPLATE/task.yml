@@ -1,0 +1,41 @@
+name: Task
+description: Track a scoped Flutter/Dart engineering task.
+title: "[Task]: "
+labels:
+  - task
+body:
+  - type: textarea
+    id: task_description
+    attributes:
+      label: Task Description
+      description: Clearly describe the task.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason
+      description: Why is this task needed?
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Link blockers, related issues, or required prerequisites.
+      placeholder: "#123, #456, package updates, platform constraints"
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Define completion criteria.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
