@@ -25,7 +25,7 @@ jobs:
         run: flutter --version
 
       - name: Verify project structure
-        run: ls -la pubspec.yaml
+        run: ls -la app/pubspec.yaml
 
       - name: Install dependencies
         run: flutter pub get
