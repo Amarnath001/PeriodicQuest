@@ -701,11 +701,20 @@ class _GameModePageState extends State<GameModePage>
               child: ListView(
                 padding: EdgeInsets.symmetric(horizontal: w * 0.05),
                 children: [
-                  const _ModeCard(
-                    bg: Color(0xFFB8D4F8), border: Color(0xFF7AB0E0),
-                    iconBg: Color(0xFFD8ECFF),
-                    iconPainter: _BeakerIconPainter(),
+                  _ModeCard(
+                    bg: const Color(0xFFB8D4F8), border: const Color(0xFF7AB0E0),
+                    iconBg: const Color(0xFFD8ECFF),
+                    iconPainter: const _BeakerIconPainter(),
                     title: 'Explore Mode', subtitle: 'Tap elements and learn',
+                    onTap: () => Navigator.push(context, PageRouteBuilder(
+                      pageBuilder: (ig1, ig2, ig3) => const ExplorePage(),
+                      transitionsBuilder: (ig, anim, igs, child) => SlideTransition(
+                        position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
+                            .animate(CurvedAnimation(parent: anim, curve: Curves.easeInOut)),
+                        child: child,
+                      ),
+                      transitionDuration: const Duration(milliseconds: 320),
+                    )),
                   ),
                   SizedBox(height: h * 0.025),
                   const _ModeCard(
@@ -791,16 +800,18 @@ class _ModeCard extends StatelessWidget {
   final CustomPainter iconPainter;
   final String title;
   final String subtitle;
+  final VoidCallback? onTap;
 
   const _ModeCard({
     required this.bg, required this.border, required this.iconBg,
     required this.iconPainter, required this.title, required this.subtitle,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -981,6 +992,594 @@ class _StarIconPainter extends CustomPainter {
     }
     path.close();
     return path;
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter old) => false;
+}
+
+// ─── Explore Page ─────────────────────────────────────────────────────────────
+
+class ExplorePage extends StatefulWidget {
+  const ExplorePage({super.key});
+
+  @override
+  State<ExplorePage> createState() => _ExplorePageState();
+}
+
+class _ExplorePageState extends State<ExplorePage>
+    with TickerProviderStateMixin {
+  late final AnimationController _cloudCtrl;
+  late final AnimationController _sparkleCtrl;
+  late final AnimationController _cardCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _cloudCtrl   = AnimationController(vsync: this, duration: const Duration(seconds: 30))..repeat();
+    _sparkleCtrl = AnimationController(vsync: this, duration: const Duration(seconds: 4))..repeat();
+    _cardCtrl    = AnimationController(vsync: this, duration: const Duration(milliseconds: 600))
+      ..forward();
+  }
+
+  @override
+  void dispose() {
+    _cloudCtrl.dispose();
+    _sparkleCtrl.dispose();
+    _cardCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFC8B8F8), Color(0xFFDDD0FF), Color(0xFFF0E8FF)],
+            stops: [0.0, 0.5, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: LayoutBuilder(builder: _buildLayout),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLayout(BuildContext context, BoxConstraints bc) {
+    final w = bc.maxWidth;
+    final h = bc.maxHeight;
+    final pad = w * 0.045;
+
+    return Stack(
+      children: [
+        // ── Animated clouds ────────────────────────────────────────────────
+        _cloud(size: w * 0.85, baseLeft: -w * 0.20, top: h * 0.04, phase: 0.00, amp: w * 0.05),
+        _cloud(size: w * 0.65, baseLeft:  w * 0.50, top: h * 0.18, phase: 0.33, amp: w * 0.04),
+        _cloud(size: w * 0.55, baseLeft: -w * 0.08, top: h * 0.70, phase: 0.66, amp: w * 0.03),
+
+        // ── Sparkles ──────────────────────────────────────────────────────
+        ..._sparkles(w, h),
+
+        // ── Content ───────────────────────────────────────────────────────
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: h * 0.025),
+            // Back button
+            Padding(
+              padding: EdgeInsets.only(left: pad),
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.88),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.10),
+                          blurRadius: 6, offset: const Offset(0, 2)),
+                    ],
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.arrow_back_ios, size: 13, color: Color(0xFF3D3070)),
+                      SizedBox(width: 3),
+                      Text('Back', style: TextStyle(color: Color(0xFF3D3070),
+                          fontWeight: FontWeight.w700, fontSize: 14)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: h * 0.028),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: pad),
+              child: Text('Choose What to Explore',
+                  style: TextStyle(fontSize: math.min(28.0, w * 0.075),
+                      fontWeight: FontWeight.w900, color: const Color(0xFF1A1A4A))),
+            ),
+            SizedBox(height: h * 0.025),
+            // 2×2 category grid
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: pad),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(child: _categoryCard(0, 'All Elements',
+                              'Browse every element',
+                              const Color(0xFFBFE4F8), const Color(0xFF90C8E8),
+                              const _AllElementsIconPainter())),
+                          SizedBox(width: pad * 0.7),
+                          Expanded(child: _categoryCard(1, 'Metals',
+                              'Shiny and strong elements',
+                              const Color(0xFFFFF0C0), const Color(0xFFE8D090),
+                              const _MetalsIconPainter())),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: pad * 0.7),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(child: _categoryCard(2, 'Nonmetals',
+                              'Elements like oxygen and carbon',
+                              const Color(0xFFB8EEF0), const Color(0xFF80C8CC),
+                              const _NonmetalsIconPainter())),
+                          SizedBox(width: pad * 0.7),
+                          Expanded(child: _categoryCard(3, 'Noble Gases',
+                              'Special gases like helium and neon',
+                              const Color(0xFFDDD0FF), const Color(0xFFAA90E8),
+                              const _NobleGasIconPainter())),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: pad * 0.7),
+            // Element of the Day banner
+            _elementOfTheDay(w, h, pad),
+            SizedBox(height: pad),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _categoryCard(int index, String title, String subtitle,
+      Color bg, Color border, CustomPainter icon) {
+    return AnimatedBuilder(
+      animation: _cardCtrl,
+      builder: (_, child) {
+        final delay = index * 0.15;
+        final t = math.max(0.0, (_cardCtrl.value - delay) / (1.0 - delay));
+        final curved = Curves.easeOutBack.transform(t.clamp(0.0, 1.0));
+        return Opacity(
+          opacity: curved.clamp(0.0, 1.0),
+          child: Transform.translate(offset: Offset(0, 30 * (1 - curved)), child: child),
+        );
+      },
+      child: GestureDetector(
+        onTap: () {},
+        child: Container(
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: border, width: 2),
+            boxShadow: [
+              BoxShadow(color: border.withValues(alpha: 0.45),
+                  blurRadius: 12, offset: const Offset(0, 5)),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 90, height: 80,
+                child: CustomPaint(painter: icon),
+              ),
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: math.min(17.0, 17),
+                        fontWeight: FontWeight.w800, color: const Color(0xFF1A1A4A))),
+              ),
+              const SizedBox(height: 3),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(subtitle,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 11.5,
+                        color: Color(0xFF4A4A7A), fontWeight: FontWeight.w500)),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _elementOfTheDay(double w, double h, double pad) {
+    return AnimatedBuilder(
+      animation: _cardCtrl,
+      builder: (_, child) {
+        final t = Curves.easeOutBack.transform(_cardCtrl.value.clamp(0.0, 1.0));
+        return Opacity(
+          opacity: t.clamp(0.0, 1.0),
+          child: Transform.translate(offset: Offset(0, 20 * (1 - t)), child: child),
+        );
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: pad),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF0C8),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: const Color(0xFFE8C870), width: 2),
+                boxShadow: [
+                  BoxShadow(color: const Color(0xFFE8C870).withValues(alpha: 0.4),
+                      blurRadius: 12, offset: const Offset(0, 5)),
+                ],
+              ),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 62, height: 62,
+                    child: const CustomPaint(painter: _KawaiiStarPainter()),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text('Element of the Day',
+                            style: TextStyle(fontSize: 18,
+                                fontWeight: FontWeight.w800, color: Color(0xFF1A1A4A))),
+                        SizedBox(height: 4),
+                        Text('Learn one special element with uses and fun facts.',
+                            style: TextStyle(fontSize: 12.5,
+                                color: Color(0xFF5A4A20), fontWeight: FontWeight.w500)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // NEW TODAY badge
+            Positioned(
+              top: -10, right: 12,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF8C30),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(color: const Color(0xFFDD6800).withValues(alpha: 0.45),
+                        blurRadius: 6, offset: const Offset(0, 3)),
+                  ],
+                ),
+                child: const Text('NEW TODAY!',
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800,
+                        color: Colors.white, letterSpacing: 0.5)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _cloud({required double size, required double baseLeft,
+      required double top, required double phase, required double amp}) {
+    return Positioned(
+      left: baseLeft, top: top,
+      child: AnimatedBuilder(
+        animation: _cloudCtrl,
+        builder: (_, child) {
+          final dx = math.sin((_cloudCtrl.value + phase) * math.pi * 2) * amp;
+          return Transform.translate(offset: Offset(dx, 0), child: child);
+        },
+        child: Container(
+          width: size, height: size * 0.58,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(size * 0.38),
+            color: Colors.white.withValues(alpha: 0.25),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _sparkles(double w, double h) {
+    final specs = <List<dynamic>>[
+      [w * 0.04, h * 0.035, 16.0, 0xFFFFFFFF, 0.00],
+      [w * 0.93, h * 0.075, 13.0, 0xFFFFE082, 0.12],
+      [w * 0.08, h * 0.280, 10.0, 0xFFFFE082, 0.28],
+      [w * 0.94, h * 0.320, 10.0, 0xCCFFFFFF, 0.44],
+      [w * 0.05, h * 0.720, 18.0, 0xFFFFE082, 0.60],
+      [w * 0.93, h * 0.760,  14.0, 0xFFFFFFFF, 0.76],
+      [w * 0.50, h * 0.110, 9.0, 0xFFFFE082, 0.88],
+    ];
+    return specs.map((s) {
+      return Positioned(
+        left: s[0] as double, top: s[1] as double,
+        child: AnimatedBuilder(
+          animation: _sparkleCtrl,
+          builder: (_, ignored) {
+            final t = (_sparkleCtrl.value + (s[4] as double)) % 1.0;
+            final v = (math.sin(t * math.pi * 2) + 1) / 2;
+            return Opacity(
+              opacity: 0.25 + 0.75 * v,
+              child: Transform.scale(scale: 0.5 + 0.5 * v,
+                  child: _Sparkle(size: s[2] as double, color: Color(s[3] as int))),
+            );
+          },
+        ),
+      );
+    }).toList();
+  }
+}
+
+// ─── Category icon painters ───────────────────────────────────────────────────
+
+class _AllElementsIconPainter extends CustomPainter {
+  const _AllElementsIconPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    void tile(Offset center, String label, Color bg, double rot) {
+      canvas.save();
+      canvas.translate(center.dx, center.dy);
+      canvas.rotate(rot);
+      final s = w * 0.28;
+      final rr = RRect.fromRectAndRadius(
+          Rect.fromCenter(center: Offset.zero, width: s, height: s),
+          Radius.circular(s * 0.18));
+      canvas.drawRRect(rr, Paint()..color = bg);
+      canvas.drawRRect(rr,
+          Paint()..color = bg.withValues(alpha: 0)..color = Colors.white.withValues(alpha: 0.3)
+            ..style = PaintingStyle.stroke..strokeWidth = 1.5);
+      final tp = TextPainter(
+        text: TextSpan(text: label,
+            style: TextStyle(fontSize: s * 0.42, fontWeight: FontWeight.w900,
+                color: Colors.white)),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, Offset(-tp.width / 2, -tp.height / 2));
+      canvas.restore();
+    }
+
+    tile(Offset(w * 0.28, h * 0.58), 'H',  const Color(0xFFF5C030), -0.12);
+    tile(Offset(w * 0.55, h * 0.70), 'O',  const Color(0xFF9C7BD4),  0.10);
+    tile(Offset(w * 0.72, h * 0.48), 'N',  const Color(0xFF5BBD70), -0.08);
+    tile(Offset(w * 0.50, h * 0.30), 'Au', const Color(0xFFE8A030),  0.15);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter old) => false;
+}
+
+class _MetalsIconPainter extends CustomPainter {
+  const _MetalsIconPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    // Chest body
+    final bodyPaint = Paint()..color = const Color(0xFFB87040);
+    final bodyRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(w * 0.12, h * 0.42, w * 0.76, h * 0.46),
+        const Radius.circular(8));
+    canvas.drawRRect(bodyRect, bodyPaint);
+
+    // Chest lid (curved top)
+    final lidPath = Path()
+      ..moveTo(w * 0.12, h * 0.44)
+      ..lineTo(w * 0.12, h * 0.30)
+      ..quadraticBezierTo(w * 0.50, h * 0.10, w * 0.88, h * 0.30)
+      ..lineTo(w * 0.88, h * 0.44)
+      ..close();
+    canvas.drawPath(lidPath, bodyPaint);
+
+    // Lid band
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(
+            Rect.fromLTWH(w * 0.12, h * 0.40, w * 0.76, h * 0.07),
+            const Radius.circular(4)),
+        Paint()..color = const Color(0xFF8B5020));
+
+    // Golden latch
+    canvas.drawCircle(Offset(w * 0.5, h * 0.445), w * 0.07,
+        Paint()..color = const Color(0xFFFFD030));
+    canvas.drawCircle(Offset(w * 0.5, h * 0.445), w * 0.04,
+        Paint()..color = const Color(0xFFCC8800));
+
+    // Coins spilling out
+    final coinPaint = Paint()..color = const Color(0xFFFFD030);
+    for (final c in [
+      Offset(w * 0.30, h * 0.28), Offset(w * 0.50, h * 0.22),
+      Offset(w * 0.68, h * 0.28), Offset(w * 0.40, h * 0.18),
+      Offset(w * 0.60, h * 0.20),
+    ]) {
+      canvas.drawCircle(c, w * 0.075, coinPaint);
+      canvas.drawCircle(c, w * 0.075,
+          Paint()..color = const Color(0xFFCC8800)..style = PaintingStyle.stroke..strokeWidth = 1.5);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter old) => false;
+}
+
+class _NonmetalsIconPainter extends CustomPainter {
+  const _NonmetalsIconPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    void tube(double cx, double cy, double tw, double th, double r, Color fill, Color liquid) {
+      final body = Path()
+        ..moveTo(cx - tw / 2, cy - th / 2)
+        ..lineTo(cx - tw / 2, cy + th / 2 - r)
+        ..quadraticBezierTo(cx - tw / 2, cy + th / 2, cx, cy + th / 2)
+        ..quadraticBezierTo(cx + tw / 2, cy + th / 2, cx + tw / 2, cy + th / 2 - r)
+        ..lineTo(cx + tw / 2, cy - th / 2)
+        ..close();
+      // Handle at top
+      final handle = Path()
+        ..moveTo(cx - tw * 0.7, cy - th / 2)
+        ..lineTo(cx - tw * 0.7, cy - th / 2 - th * 0.10)
+        ..lineTo(cx + tw * 0.7, cy - th / 2 - th * 0.10)
+        ..lineTo(cx + tw * 0.7, cy - th / 2);
+
+      final liquidMask = Path()..addRect(Rect.fromLTWH(0, cy + th * 0.05, w, h));
+      canvas.drawPath(body, Paint()..color = fill);
+      canvas.drawPath(Path.combine(PathOperation.intersect, body, liquidMask),
+          Paint()..color = liquid);
+      canvas.drawPath(body,
+          Paint()..color = const Color(0xFF5090B8)..style = PaintingStyle.stroke
+            ..strokeWidth = 2.2..strokeJoin = StrokeJoin.round);
+      canvas.drawPath(handle,
+          Paint()..color = const Color(0xFF5090B8)..style = PaintingStyle.stroke
+            ..strokeWidth = 2.2..strokeCap = StrokeCap.round..strokeJoin = StrokeJoin.round);
+    }
+
+    tube(w * 0.35, h * 0.55, w * 0.25, h * 0.55, w * 0.12,
+        const Color(0xFFE0F4FF), const Color(0xFF70C8E0));
+    tube(w * 0.65, h * 0.52, w * 0.22, h * 0.50, w * 0.11,
+        const Color(0xFFE8F8FF), const Color(0xFF90D8E8));
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter old) => false;
+}
+
+class _NobleGasIconPainter extends CustomPainter {
+  const _NobleGasIconPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    // Main circle face
+    canvas.drawCircle(Offset(w * 0.5, h * 0.52), w * 0.36,
+        Paint()..color = const Color(0xFFAA88E8));
+    canvas.drawCircle(Offset(w * 0.5, h * 0.52), w * 0.36,
+        Paint()..color = const Color(0xFF8860CC)..style = PaintingStyle.stroke..strokeWidth = 2.5);
+
+    // Sheen
+    canvas.drawOval(
+        Rect.fromCenter(center: Offset(w * 0.38, h * 0.34), width: w * 0.18, height: h * 0.09),
+        Paint()..color = Colors.white.withValues(alpha: 0.35));
+
+    // Eyes (dots)
+    canvas.drawCircle(Offset(w * 0.385, h * 0.485), w * 0.048,
+        Paint()..color = const Color(0xFF2A1A4A));
+    canvas.drawCircle(Offset(w * 0.615, h * 0.485), w * 0.048,
+        Paint()..color = const Color(0xFF2A1A4A));
+
+    // Eye highlights
+    canvas.drawCircle(Offset(w * 0.372, h * 0.472), w * 0.016,
+        Paint()..color = Colors.white);
+    canvas.drawCircle(Offset(w * 0.602, h * 0.472), w * 0.016,
+        Paint()..color = Colors.white);
+
+    // Rosy cheeks
+    canvas.drawCircle(Offset(w * 0.29, h * 0.56), w * 0.06,
+        Paint()..color = const Color(0xFFFFB0D8).withValues(alpha: 0.6));
+    canvas.drawCircle(Offset(w * 0.71, h * 0.56), w * 0.06,
+        Paint()..color = const Color(0xFFFFB0D8).withValues(alpha: 0.6));
+
+    // Smile
+    canvas.drawPath(
+      Path()..moveTo(w * 0.37, h * 0.60)
+            ..quadraticBezierTo(w * 0.50, h * 0.68, w * 0.63, h * 0.60),
+      Paint()..color = const Color(0xFF2A1A4A)..style = PaintingStyle.stroke
+            ..strokeWidth = 2.2..strokeCap = StrokeCap.round,
+    );
+
+    // Small atom rings
+    canvas.drawOval(Rect.fromCenter(center: Offset(w * 0.5, h * 0.12),
+        width: w * 0.28, height: h * 0.12),
+        Paint()..color = const Color(0xFF8860CC).withValues(alpha: 0.5)
+          ..style = PaintingStyle.stroke..strokeWidth = 1.5);
+    canvas.drawOval(Rect.fromCenter(center: Offset(w * 0.5, h * 0.12),
+        width: w * 0.14, height: h * 0.22),
+        Paint()..color = const Color(0xFF8860CC).withValues(alpha: 0.5)
+          ..style = PaintingStyle.stroke..strokeWidth = 1.5);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter old) => false;
+}
+
+class _KawaiiStarPainter extends CustomPainter {
+  const _KawaiiStarPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    final path = Path();
+    final cx = w * 0.5;
+    final cy = h * 0.5;
+    for (int i = 0; i < 10; i++) {
+      final r = i.isEven ? w * 0.46 : w * 0.20;
+      final a = math.pi * i / 5 - math.pi / 2;
+      final p = Offset(cx + r * math.cos(a), cy + r * math.sin(a));
+      if (i == 0) { path.moveTo(p.dx, p.dy); } else { path.lineTo(p.dx, p.dy); }
+    }
+    path.close();
+    canvas.drawPath(path, Paint()..color = const Color(0xFFFFD030));
+    canvas.drawPath(path, Paint()..color = const Color(0xFFCC9900)
+        ..style = PaintingStyle.stroke..strokeWidth = 1.8..strokeJoin = StrokeJoin.round);
+
+    canvas.drawCircle(Offset(cx - w * 0.12, cy - h * 0.06), w * 0.065,
+        Paint()..color = const Color(0xFF1A1A2A));
+    canvas.drawCircle(Offset(cx + w * 0.12, cy - h * 0.06), w * 0.065,
+        Paint()..color = const Color(0xFF1A1A2A));
+    canvas.drawCircle(Offset(cx - w * 0.22, cy + h * 0.06), w * 0.07,
+        Paint()..color = const Color(0xFFFFB0A0).withValues(alpha: 0.6));
+    canvas.drawCircle(Offset(cx + w * 0.22, cy + h * 0.06), w * 0.07,
+        Paint()..color = const Color(0xFFFFB0A0).withValues(alpha: 0.6));
+    canvas.drawPath(
+      Path()..moveTo(cx - w * 0.10, cy + h * 0.10)
+            ..quadraticBezierTo(cx, cy + h * 0.20, cx + w * 0.10, cy + h * 0.10),
+      Paint()..color = const Color(0xFFCC8800)..style = PaintingStyle.stroke
+            ..strokeWidth = 1.8..strokeCap = StrokeCap.round,
+    );
   }
 
   @override
