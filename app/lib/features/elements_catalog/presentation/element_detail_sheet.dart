@@ -284,10 +284,7 @@ class _AudioReplayButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (playing)
-                _PulsingDot()
-              else
-                const Text('🔊'),
+              if (playing) _PulsingDot() else const Text('🔊'),
               const SizedBox(width: 4),
               Text(
                 playing ? 'Playing…' : 'Play Audio',

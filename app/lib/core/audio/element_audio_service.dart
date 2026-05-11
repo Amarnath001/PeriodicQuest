@@ -29,8 +29,8 @@ class ElementAudioService {
     _initialised = true;
 
     await _tts.setLanguage('en-US');
-    await _tts.setSpeechRate(0.42);  // slower, easier for children
-    await _tts.setPitch(1.12);       // slightly warm/friendly tone
+    await _tts.setSpeechRate(0.42); // slower, easier for children
+    await _tts.setPitch(1.12); // slightly warm/friendly tone
     await _tts.setVolume(1.0);
 
     _tts.setStartHandler(() => isPlaying.value = true);
