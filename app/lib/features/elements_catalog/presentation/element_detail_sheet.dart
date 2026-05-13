@@ -80,6 +80,7 @@ class _ElementDetailSheetState extends State<ElementDetailSheet> {
                     _showSpanish
                         ? (kElementTranslationsEs[widget.elem.z]?.$1 ?? widget.elem.name)
                         : widget.elem.name,
+                    widget.elem.name,
                     style: TextStyle(
                       fontSize: math.min(26.0, dw * 0.072),
                       fontWeight: FontWeight.w900,
@@ -124,6 +125,7 @@ class _ElementDetailSheetState extends State<ElementDetailSheet> {
                           _showSpanish
                               ? (kElementTranslationsEs[widget.elem.z]?.$2 ?? widget.elem.desc)
                               : widget.elem.desc,
+                          widget.elem.desc,
                           style: TextStyle(
                             fontSize: math.min(13.5, dw * 0.034),
                             color: const Color(0xFF333333),
@@ -153,6 +155,7 @@ class _ElementDetailSheetState extends State<ElementDetailSheet> {
                   children: [
                     Text(
                       _showSpanish ? '¡Dato Curioso!' : 'Fun Fact!',
+                      'Fun Fact!',
                       style: TextStyle(
                         fontSize: math.min(14.0, dw * 0.036),
                         fontWeight: FontWeight.w800,
@@ -164,6 +167,7 @@ class _ElementDetailSheetState extends State<ElementDetailSheet> {
                       _showSpanish
                           ? (kElementTranslationsEs[widget.elem.z]?.$3 ?? widget.elem.fact)
                           : widget.elem.fact,
+                      widget.elem.fact,
                       style: TextStyle(
                         fontSize: math.min(13.0, dw * 0.033),
                         color: const Color(0xFF5A4A00),
@@ -200,6 +204,10 @@ class _ElementDetailSheetState extends State<ElementDetailSheet> {
                         backgroundColor: _showSpanish
                             ? const Color(0xFFFFF3DC)
                             : null,
+                      onPressed: () {},
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF5A7A8A),
+                        side: const BorderSide(color: Color(0xFFB8D4E8)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -207,6 +215,7 @@ class _ElementDetailSheetState extends State<ElementDetailSheet> {
                       ),
                       child: Text(
                         _showSpanish ? 'English' : 'Traducir',
+                        'Translate',
                         style: TextStyle(fontSize: math.min(12.0, dw * 0.030)),
                       ),
                     ),

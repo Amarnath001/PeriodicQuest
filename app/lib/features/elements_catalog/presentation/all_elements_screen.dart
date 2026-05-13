@@ -18,6 +18,7 @@ class AllElementsPage extends StatefulWidget {
 
   const AllElementsPage({super.key, this.title, this.filterCategories});
 
+  const AllElementsPage({super.key});
   @override
   State<AllElementsPage> createState() => _AllElementsPageState();
 }
@@ -108,6 +109,7 @@ class _AllElementsPageState extends State<AllElementsPage>
                   Expanded(
                     child: Text(
                       widget.title ?? AppStrings.allElements,
+                      AppStrings.allElements,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: math.min(30.0, w * 0.072),
@@ -136,6 +138,9 @@ class _AllElementsPageState extends State<AllElementsPage>
                     itemCount: _elements.length,
                     itemBuilder: (context, i) {
                       final e = _elements[i];
+                    itemCount: _catalog.allElements.length,
+                    itemBuilder: (context, i) {
+                      final e = _catalog.allElements[i];
                       final delay = (i % (cols * 5)) * 0.007;
                       final t = math.max(
                         0.0,
