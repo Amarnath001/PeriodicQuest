@@ -170,10 +170,19 @@ class _ExplorePageState extends State<ExplorePage>
                                   const MetalsCategoryIcon(),
                                   onTap: () => Navigator.push(
                                     context,
-                                    slideRoute(const AllElementsPage(
-                                      title: AppStrings.metals,
-                                      filterCategories: ['alkali', 'alkaline', 'transition', 'post', 'lanthanide', 'actinide'],
-                                    )),
+                                    slideRoute(
+                                      const AllElementsPage(
+                                        title: AppStrings.metals,
+                                        filterCategories: [
+                                          'alkali',
+                                          'alkaline',
+                                          'transition',
+                                          'post',
+                                          'lanthanide',
+                                          'actinide',
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -194,10 +203,16 @@ class _ExplorePageState extends State<ExplorePage>
                                   const NonmetalsCategoryIcon(),
                                   onTap: () => Navigator.push(
                                     context,
-                                    slideRoute(const AllElementsPage(
-                                      title: AppStrings.nonmetals,
-                                      filterCategories: ['nonmetal', 'halogen', 'metalloid'],
-                                    )),
+                                    slideRoute(
+                                      const AllElementsPage(
+                                        title: AppStrings.nonmetals,
+                                        filterCategories: [
+                                          'nonmetal',
+                                          'halogen',
+                                          'metalloid',
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -212,10 +227,12 @@ class _ExplorePageState extends State<ExplorePage>
                                   const NobleGasesCategoryIcon(),
                                   onTap: () => Navigator.push(
                                     context,
-                                    slideRoute(const AllElementsPage(
-                                      title: AppStrings.nobleGases,
-                                      filterCategories: ['noble'],
-                                    )),
+                                    slideRoute(
+                                      const AllElementsPage(
+                                        title: AppStrings.nobleGases,
+                                        filterCategories: ['noble'],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),

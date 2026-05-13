@@ -78,7 +78,8 @@ class _ElementDetailSheetState extends State<ElementDetailSheet> {
                   const Spacer(),
                   Text(
                     _showSpanish
-                        ? (kElementTranslationsEs[widget.elem.z]?.$1 ?? widget.elem.name)
+                        ? (kElementTranslationsEs[widget.elem.z]?.name ??
+                              widget.elem.name)
                         : widget.elem.name,
                     widget.elem.name,
                     style: TextStyle(
@@ -123,7 +124,8 @@ class _ElementDetailSheetState extends State<ElementDetailSheet> {
                         SizedBox(height: dw * 0.026),
                         Text(
                           _showSpanish
-                              ? (kElementTranslationsEs[widget.elem.z]?.$2 ?? widget.elem.desc)
+                              ? (kElementTranslationsEs[widget.elem.z]?.desc ??
+                                    widget.elem.desc)
                               : widget.elem.desc,
                           widget.elem.desc,
                           style: TextStyle(
@@ -165,7 +167,8 @@ class _ElementDetailSheetState extends State<ElementDetailSheet> {
                     SizedBox(height: dw * 0.018),
                     Text(
                       _showSpanish
-                          ? (kElementTranslationsEs[widget.elem.z]?.$3 ?? widget.elem.fact)
+                          ? (kElementTranslationsEs[widget.elem.z]?.fact ??
+                                widget.elem.fact)
                           : widget.elem.fact,
                       widget.elem.fact,
                       style: TextStyle(
@@ -191,7 +194,8 @@ class _ElementDetailSheetState extends State<ElementDetailSheet> {
                   SizedBox(width: dw * 0.026),
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () => setState(() => _showSpanish = !_showSpanish),
+                      onPressed: () =>
+                          setState(() => _showSpanish = !_showSpanish),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: _showSpanish
                             ? const Color(0xFF7A4A00)
