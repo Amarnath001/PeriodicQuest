@@ -13,7 +13,11 @@ import 'element_detail_sheet.dart';
 import 'element_grid_tile.dart';
 
 class AllElementsPage extends StatefulWidget {
-  const AllElementsPage({super.key});
+  final String? title;
+  final List<String>? filterCategories;
+
+  const AllElementsPage({super.key, this.title, this.filterCategories});
+
   @override
   State<AllElementsPage> createState() => _AllElementsPageState();
 }
@@ -21,6 +25,12 @@ class AllElementsPage extends StatefulWidget {
 class _AllElementsPageState extends State<AllElementsPage>
     with TickerProviderStateMixin {
   static const _catalog = ElementCatalogRepository();
+
+  List<ChemicalElement> get _elements {
+    final filter = widget.filterCategories;
+    if (filter == null) return _catalog.allElements;
+    return _catalog.allElements.where((e) => filter.contains(e.cat)).toList();
+  }
 
   late final AnimationController _cloudCtrl;
   late final AnimationController _gridCtrl;
@@ -97,7 +107,7 @@ class _AllElementsPageState extends State<AllElementsPage>
                   ),
                   Expanded(
                     child: Text(
-                      AppStrings.allElements,
+                      widget.title ?? AppStrings.allElements,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: math.min(30.0, w * 0.072),
@@ -123,9 +133,9 @@ class _AllElementsPageState extends State<AllElementsPage>
                       crossAxisCount: cols,
                       childAspectRatio: 0.82,
                     ),
-                    itemCount: _catalog.allElements.length,
+                    itemCount: _elements.length,
                     itemBuilder: (context, i) {
-                      final e = _catalog.allElements[i];
+                      final e = _elements[i];
                       final delay = (i % (cols * 5)) * 0.007;
                       final t = math.max(
                         0.0,

@@ -168,6 +168,13 @@ class _ExplorePageState extends State<ExplorePage>
                                   const Color(0xFFFFF0C0),
                                   const Color(0xFFE8D090),
                                   const MetalsCategoryIcon(),
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    slideRoute(const AllElementsPage(
+                                      title: AppStrings.metals,
+                                      filterCategories: ['alkali', 'alkaline', 'transition', 'post', 'lanthanide', 'actinide'],
+                                    )),
+                                  ),
                                 ),
                               ),
                             ],
@@ -185,6 +192,13 @@ class _ExplorePageState extends State<ExplorePage>
                                   const Color(0xFFB8EEF0),
                                   const Color(0xFF80C8CC),
                                   const NonmetalsCategoryIcon(),
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    slideRoute(const AllElementsPage(
+                                      title: AppStrings.nonmetals,
+                                      filterCategories: ['nonmetal', 'halogen', 'metalloid'],
+                                    )),
+                                  ),
                                 ),
                               ),
                               SizedBox(width: pad * 0.7),
@@ -196,6 +210,13 @@ class _ExplorePageState extends State<ExplorePage>
                                   const Color(0xFFDDD0FF),
                                   const Color(0xFFAA90E8),
                                   const NobleGasesCategoryIcon(),
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    slideRoute(const AllElementsPage(
+                                      title: AppStrings.nobleGases,
+                                      filterCategories: ['noble'],
+                                    )),
+                                  ),
                                 ),
                               ),
                             ],
